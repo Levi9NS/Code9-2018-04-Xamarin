@@ -1,8 +1,8 @@
-# Code9-Xamarin
-
 <p align="center">
 <img src="https://upload.wikimedia.org/wikipedia/commons/6/68/Xamarin_logo_and_wordmark.png" alt="Xamarin.Forms logo" width="300">
 </p>
+
+# Code9-Xamarin
 
 A project in Xamarin which allows you to register user, login, create new posts and get posts from the endpoints of the API. This project use Xamarin.Forms.
 
