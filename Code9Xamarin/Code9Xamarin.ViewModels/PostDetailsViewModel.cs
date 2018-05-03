@@ -230,9 +230,13 @@ namespace Code9Xamarin.ViewModels
             try
             {
                 IsBusy = true;
+                string[] tags = null;
 
-                string[] tags = new string[Tags.Count];
-                Tags.CopyTo(tags, 0);
+                if (Tags != null)
+                {
+                    tags = new string[Tags.Count];
+                    Tags.CopyTo(tags, 0);
+                }
 
                 if (_photoStream != null)
                 {
