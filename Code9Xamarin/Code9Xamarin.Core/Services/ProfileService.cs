@@ -23,14 +23,12 @@ namespace Code9Xamarin.Core.Services
                 Path = $"api/profile"
             };
 
-            string uri = builder.ToString();
-
             if (await _authenticationService.IsTokenExpired(token))
             {
                 await _authenticationService.RenewSession(AppSettings.UserId, AppSettings.RefreshToken);
             }
 
-            var profile = await _requestService.GetAsync<GetProfileDto>(uri, token);
+            var profile = await _requestService.GetAsync<GetProfileDto>(builder.Uri, token);
 
             AppSettings.UserId = profile.UserId;
 
@@ -44,9 +42,7 @@ namespace Code9Xamarin.Core.Services
                 Path = "api/profile"
             };
 
-            string uri = builder.ToString();
-
-            var message = await _requestService.PostAsync<CreateProfileDto, string>(uri, profile);
+            var message = await _requestService.PostAsync<CreateProfileDto, string>(builder.Uri, profile);
 
             return await Task.FromResult(true);
         }

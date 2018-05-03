@@ -25,14 +25,12 @@ namespace Code9Xamarin.Core.Services
                 Query = $"postId={postId}"
             };
 
-            string uri = builder.ToString();
-
             if (await _authenticationService.IsTokenExpired(token))
             {
                 await _authenticationService.RenewSession(AppSettings.UserId, AppSettings.RefreshToken);
             }
 
-            return await _requestService.GetAsync<IEnumerable<GetCommentDto>>(uri, token);
+            return await _requestService.GetAsync<IEnumerable<GetCommentDto>>(builder.Uri, token);
         }
 
         public async Task<bool> CreateComment(Guid postId, string text, string token)
@@ -43,14 +41,12 @@ namespace Code9Xamarin.Core.Services
                 Query = $"postId={postId}&text={text}"
             };
 
-            string uri = builder.ToString();
-
             if (await _authenticationService.IsTokenExpired(token))
             {
                 await _authenticationService.RenewSession(AppSettings.UserId, AppSettings.RefreshToken);
             }
 
-            await _requestService.PostAsync<string, string>(uri, null, token);
+            await _requestService.PostAsync<string, string>(builder.Uri, null, token);
 
             return await Task.FromResult(true);
         }
@@ -63,14 +59,12 @@ namespace Code9Xamarin.Core.Services
                 Query = $"commentId={id}"
             };
 
-            string uri = builder.ToString();
-
             if (await _authenticationService.IsTokenExpired(token))
             {
                 await _authenticationService.RenewSession(AppSettings.UserId, AppSettings.RefreshToken);
             }
 
-            await _requestService.DeleteAsync<string, string>(uri, null, token);
+            await _requestService.DeleteAsync<string, string>(builder.Uri, null, token);
 
             return await Task.FromResult(true);
         }

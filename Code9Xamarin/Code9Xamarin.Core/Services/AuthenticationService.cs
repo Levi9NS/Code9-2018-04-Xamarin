@@ -20,12 +20,10 @@ namespace Code9Xamarin.Core.Services
             UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint)
             {
                 Path = "api/token/request",
-                Query = $"userName={userName}&password={password}"
+                Query = $"userName={Uri.EscapeDataString(userName)}&password={Uri.EscapeDataString(password)}"
             };
 
-            string uri = builder.ToString();
-
-            var tokenResponse = await _requestService.GetAsync<TokenModel>(uri);
+            var tokenResponse = await _requestService.GetAsync<TokenModel>(builder.Uri);
 
             AppSettings.Token = tokenResponse.Token;
             AppSettings.RefreshToken = tokenResponse.RefreshToken;
@@ -52,12 +50,10 @@ namespace Code9Xamarin.Core.Services
             UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint)
             {
                 Path = $"api/token/refresh",
-                Query = $"userId={userId}&refreshToken={refreshToken}"
+                Query = $"userId={userId}&refreshToken={Uri.EscapeDataString(refreshToken)}" //refreshToken can have a plus sign, and that's why we have to escape it
             };
 
-            string uri = builder.ToString();
-
-            var tokenResponse = await _requestService.GetAsync<TokenModel>(uri);
+            var tokenResponse = await _requestService.GetAsync<TokenModel>(builder.Uri);
 
             AppSettings.Token = tokenResponse.Token;
             AppSettings.RefreshToken = tokenResponse.RefreshToken;

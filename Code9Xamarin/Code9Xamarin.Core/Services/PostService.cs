@@ -22,17 +22,15 @@ namespace Code9Xamarin.Core.Services
             UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint)
             {
                 Path = $"api/posts/all",
-                Query = $"searchString={searchString}"
+                Query = $"searchString={Uri.EscapeDataString(searchString)}"
             };
-
-            string uri = builder.ToString();
 
             if (await _authenticationService.IsTokenExpired(token))
             {
                 await _authenticationService.RenewSession(AppSettings.UserId, AppSettings.RefreshToken);
             }
 
-            return await _requestService.GetAsync<IEnumerable<PostDto>>(uri, token);
+            return await _requestService.GetAsync<IEnumerable<PostDto>>(builder.Uri, token);
         }
 
         public async Task<PostDto> GetPost(Guid id, string token)
@@ -42,14 +40,12 @@ namespace Code9Xamarin.Core.Services
                 Path = $"api/posts/{id}"
             };
 
-            string uri = builder.ToString();
-
             if (await _authenticationService.IsTokenExpired(token))
             {
                 await _authenticationService.RenewSession(AppSettings.UserId, AppSettings.RefreshToken);
             }
 
-            return await _requestService.GetAsync<PostDto>(uri, token);
+            return await _requestService.GetAsync<PostDto>(builder.Uri, token);
         }
 
         public async Task<bool> CreatePost(CreatePostDto post, string token)
@@ -59,14 +55,12 @@ namespace Code9Xamarin.Core.Services
                 Path = "api/posts"
             };
 
-            string uri = builder.ToString();
-
             if (await _authenticationService.IsTokenExpired(token))
             {
                 await _authenticationService.RenewSession(AppSettings.UserId, AppSettings.RefreshToken);
             }
 
-            await _requestService.PostAsync<CreatePostDto, string>(uri, post, token);
+            await _requestService.PostAsync<CreatePostDto, string>(builder.Uri, post, token);
 
             return await Task.FromResult(true);
         }
@@ -78,14 +72,12 @@ namespace Code9Xamarin.Core.Services
                 Path = $"api/posts/{id}"
             };
 
-            string uri = builder.ToString();
-
             if (await _authenticationService.IsTokenExpired(token))
             {
                 await _authenticationService.RenewSession(AppSettings.UserId, AppSettings.RefreshToken);
             }
 
-            await _requestService.PutAsync<EditPostDto, string>(uri, post, token);
+            await _requestService.PutAsync<EditPostDto, string>(builder.Uri, post, token);
             return await Task.FromResult(true);
         }
 
@@ -96,14 +88,12 @@ namespace Code9Xamarin.Core.Services
                 Path = $"api/posts/{id}/reactToPost"
             };
 
-            string uri = builder.ToString();
-
             if (await _authenticationService.IsTokenExpired(token))
             {
                 await _authenticationService.RenewSession(AppSettings.UserId, AppSettings.RefreshToken);
             }
 
-            await _requestService.PutAsync<EditPostDto, string>(uri, null, token);
+            await _requestService.PutAsync<EditPostDto, string>(builder.Uri, null, token);
 
             return await Task.FromResult(true);
         }
@@ -115,14 +105,12 @@ namespace Code9Xamarin.Core.Services
                 Path = $"api/posts/{id}"
             };
 
-            string uri = builder.ToString();
-
             if (await _authenticationService.IsTokenExpired(token))
             {
                 await _authenticationService.RenewSession(AppSettings.UserId, AppSettings.RefreshToken);
             }
 
-            await _requestService.DeleteAsync<string, string>(uri, null, token);
+            await _requestService.DeleteAsync<string, string>(builder.Uri, null, token);
 
             return await Task.FromResult(true);
         }
