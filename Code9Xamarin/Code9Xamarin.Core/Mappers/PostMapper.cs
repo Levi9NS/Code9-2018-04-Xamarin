@@ -2,6 +2,7 @@
 using Code9Xamarin.Core.Mappers.Interfaces;
 using Code9Xamarin.Core.Models;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using Xamarin.Forms;
 
@@ -23,6 +24,7 @@ namespace Code9Xamarin.Core.Mappers
         public Post ToDomainEntity(PostDto postDto)
         {
             var commentList = new List<Comment>();
+            postDto.Comments = postDto.Comments ?? new Collection<CommentDto>();
 
             foreach (var commentDto in postDto.Comments)
             {
@@ -41,12 +43,12 @@ namespace Code9Xamarin.Core.Mappers
                 CreatedOn = postDto.CreatedOn,
                 Description = postDto.Description,
                 Id = postDto.Id,
-                ImageData = ImageSource.FromStream(() => new MemoryStream(postDto.ImageData)),
+                ImageData = ImageSource.FromStream(() => new MemoryStream(postDto?.ImageData)),
                 IsLikedByUser = postDto.IsLikedByUser,
                 Likes = postDto.Likes,
                 Tags = postDto.Tags,
-                HasTags = postDto.Tags.Length > 0,
-                TagsText = string.Join(", ", postDto.Tags),
+                HasTags = postDto.Tags?.Length > 0,
+                TagsText = string.Join(", ", postDto.Tags ?? new string[0]),
                 CommentList = commentList
             };
         }

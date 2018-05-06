@@ -1,7 +1,7 @@
 ﻿using Code9Insta.API.Core.DTO;
-using Code9Xamarin.Core;
 using Code9Xamarin.Core.Models;
 using Code9Xamarin.Core.Services.Interfaces;
+using Code9Xamarin.Core.Settings;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
 using System;
@@ -22,34 +22,20 @@ namespace Code9Xamarin.ViewModels
         public Command<string> DeleteTagCommand { get; }
 
         public PostDetailsViewModel(INavigationService navigationService, IPostService postService)
-            : base(navigationService)
+            : this(navigationService, postService, new RuntimeContext())
+        { }
+
+        public PostDetailsViewModel(INavigationService navigationService, IPostService postService, IRuntimeContext runtimeContext)
+            : base(navigationService, runtimeContext)
         {
             _postService = postService;
 
-            CameraCommand = new Command(async () => await CameraClick(), () => !IsBusy);
-            GalleryCommand = new Command(async () => await GalleryClick(), () => !IsBusy);
-            SaveCommand = new Command(async () => await SaveClick(), () => !IsBusy && PostImage != null);
+            CameraCommand = new Command(async () => await Camera(), () => !IsBusy);
+            GalleryCommand = new Command(async () => await Gallery(), () => !IsBusy);
+            SaveCommand = new Command(async () => await Save(), () => !IsBusy && PostImage != null);
 
-            AddTagCommand = new Command(() => AddTagClick(), () => !IsBusy && !string.IsNullOrEmpty(TagText));
-            DeleteTagCommand = new Command<string>((item) => DeleteTagClick(item), (item) => !IsBusy);
-        }
-
-        private void DeleteTagClick(string item)
-        {
-            Tags.Remove(item);
-        }
-
-        private void AddTagClick()
-        {
-            if (Tags == null)
-            {
-                Tags = new ObservableCollection<string>();
-            }
-            if (Tags.IndexOf(TagText) == -1)
-            {
-                Tags.Add(TagText);
-            }
-            TagText = "";
+            AddTagCommand = new Command(() => AddTag(), () => !IsBusy && !string.IsNullOrEmpty(TagText));
+            DeleteTagCommand = new Command<string>((item) => DeleteTag(item), (item) => !IsBusy);
         }
 
         public override void Initialize(object navigationData)
@@ -139,7 +125,7 @@ namespace Code9Xamarin.ViewModels
             }
         }
 
-        private async Task CameraClick()
+        private async Task Camera()
         {
             try
             {
@@ -185,7 +171,7 @@ namespace Code9Xamarin.ViewModels
             }
         }
 
-        private async Task GalleryClick()
+        private async Task Gallery()
         {
             try
             {
@@ -225,7 +211,7 @@ namespace Code9Xamarin.ViewModels
             }
         }
 
-        private async Task SaveClick()
+        private async Task Save()
         {
             try
             {
@@ -254,7 +240,7 @@ namespace Code9Xamarin.ViewModels
                         Tags = tags
                     };
 
-                    await _postService.CreatePost(newPost, AppSettings.Token);
+                    await _postService.CreatePost(newPost, _runtimeContext.Token);
                     await _navigationService.NavigateAsync<PostsViewModel>();
                 }
 
@@ -267,7 +253,7 @@ namespace Code9Xamarin.ViewModels
                         Tags = tags
                     };
 
-                    await _postService.EditPost(newPost, _postId, AppSettings.Token);
+                    await _postService.EditPost(newPost, _postId, _runtimeContext.Token);
                     await _navigationService.NavigateAsync<PostsViewModel>();
                 }
             }
@@ -279,6 +265,24 @@ namespace Code9Xamarin.ViewModels
             {
                 IsBusy = false;
             }
+        }
+
+        private void DeleteTag(string item)
+        {
+            Tags.Remove(item);
+        }
+
+        private void AddTag()
+        {
+            if (Tags == null)
+            {
+                Tags = new ObservableCollection<string>();
+            }
+            if (Tags.IndexOf(TagText) == -1)
+            {
+                Tags.Add(TagText);
+            }
+            TagText = "";
         }
     }
 }

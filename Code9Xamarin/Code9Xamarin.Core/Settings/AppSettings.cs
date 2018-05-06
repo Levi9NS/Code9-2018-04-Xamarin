@@ -2,7 +2,7 @@
 using Plugin.Settings.Abstractions;
 using System;
 
-namespace Code9Xamarin.Core
+namespace Code9Xamarin.Core.Settings
 {
     public static class AppSettings
     {
