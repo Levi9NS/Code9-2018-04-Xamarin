@@ -27,7 +27,7 @@ namespace Code9Xamarin.Core.Services
         {
             UriBuilder builder = new UriBuilder(_runtimeContext.BaseEndpoint)
             {
-                Path = $"api/profiles"
+                Path = $"api/profiles/get"
             };
 
             if (await _authenticationService.IsTokenExpired(token))
@@ -46,7 +46,7 @@ namespace Code9Xamarin.Core.Services
         {
             UriBuilder builder = new UriBuilder(_runtimeContext.BaseEndpoint)
             {
-                Path = "api/profiles"
+                Path = "api/profiles/create"
             };
 
             var message = await _requestService.PostAsync<CreateProfileDto, string>(builder.Uri, profile);
